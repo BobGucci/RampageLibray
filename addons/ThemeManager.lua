@@ -9,6 +9,8 @@ local HttpService: HttpService = cloneref(game:GetService("HttpService"))
 local isfolder, isfile, listfiles = isfolder, isfile, listfiles
 
 if typeof(clonefunction) == "function" then
+    -- Fix is_____ functions for shitsploits, those functions should never error, only return a boolean.
+
     local
         isfolder_copy,
         isfile_copy,
@@ -39,18 +41,19 @@ end
 local ThemeManager = {}
 do
     local ThemeFields = { "FontColor", "MainColor", "AccentColor", "BackgroundColor", "OutlineColor" }
-    ThemeManager.Folder = "ObsidianLibSettings"
+    ThemeManager.Folder = "RampageLibSettings"
+    -- if not isfolder(ThemeManager.Folder) then makefolder(ThemeManager.Folder) end
 
     ThemeManager.Library = nil
     ThemeManager.AppliedToTab = false
     ThemeManager.BuiltInThemes = {
-        ["Default"] = {
-            1,
-            { FontColor = "ffffff", MainColor = "191919", AccentColor = "7d55ff", BackgroundColor = "0f0f0f", OutlineColor = "282828" },
-        },
         ["Rampage"] = {
+            1,
+            { FontColor = "ff0303", MainColor = "000000", AccentColor = "d10616", BackgroundColor = "000000", OutlineColor = "400000" },
+        },
+        ["Default"] = {
             2,
-            { FontColor = "ffffff", MainColor = "1a0f0f", AccentColor = "e63946", BackgroundColor = "120909", OutlineColor = "2c1a1a" },
+            { FontColor = "ffffff", MainColor = "191919", AccentColor = "7d55ff", BackgroundColor = "0f0f0f", OutlineColor = "282828" },
         },
         ["BBot"] = {
             3,
@@ -225,7 +228,7 @@ do
     end
 
     function ThemeManager:LoadDefault()
-        local theme = "Default"
+        local theme = "Rampage"
         local content = isfile(self.Folder .. "/themes/default.txt") and readfile(self.Folder .. "/themes/default.txt")
 
         local isDefault = true
@@ -236,8 +239,6 @@ do
                 theme = content
                 isDefault = false
             end
-        elseif self.BuiltInThemes[self.DefaultTheme] then
-            theme = self.DefaultTheme
         end
 
         if isDefault then
@@ -267,8 +268,8 @@ do
                 LibraryScheme[field] = Color3.fromHex(theme[field])
 
             else
-                FinalTheme[field] = ThemeManager.BuiltInThemes["Default"][2][field]
-                LibraryScheme[field] = Color3.fromHex(ThemeManager.BuiltInThemes["Default"][2][field])
+                FinalTheme[field] = ThemeManager.BuiltInThemes["Rampage"][2][field]
+                LibraryScheme[field] = Color3.fromHex(ThemeManager.BuiltInThemes["Rampage"][2][field])
             end
         end
 
@@ -290,7 +291,7 @@ do
         end
 
         self.Library.Scheme = LibraryScheme
-        self.BuiltInThemes["Default"] = { 1, FinalTheme }
+        self.BuiltInThemes["Rampage"] = { 1, FinalTheme }
 
         self.Library:UpdateColorsUsingRegistry()
     end
@@ -353,6 +354,22 @@ do
         end
 
         return out
+    end
+
+    --// SaveManager Integration \\--
+    function ThemeManager:IgnoreThemeSettings()
+        -- This method tells SaveManager to ignore theme-related options
+        return {
+            "BackgroundColor",
+            "MainColor", 
+            "AccentColor",
+            "OutlineColor",
+            "FontColor",
+            "FontFace",
+            "ThemeManager_ThemeList",
+            "ThemeManager_CustomThemeName",
+            "ThemeManager_CustomThemeList"
+        }
     end
 
     --// GUI \\--
@@ -508,5 +525,5 @@ do
     ThemeManager:BuildFolderTree()
 end
 
-getgenv().ObsidianThemeManager = ThemeManager
+getgenv().RampageThemeManager = ThemeManager
 return ThemeManager
