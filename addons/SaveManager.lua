@@ -9,6 +9,8 @@ local HttpService: HttpService = cloneref(game:GetService("HttpService"))
 local isfolder, isfile, listfiles = isfolder, isfile, listfiles
 
 if typeof(clonefunction) == "function" then
+    -- Fix is_____ functions for shitsploits, those functions should never error, only return a boolean.
+
     local
         isfolder_copy,
         isfile_copy,
@@ -39,22 +41,15 @@ end
 local ThemeManager = {}
 do
     local ThemeFields = { "FontColor", "MainColor", "AccentColor", "BackgroundColor", "OutlineColor" }
-    ThemeManager.Folder = "ObsidianLibSettings"
-  
-    ThemeManager.DefaultTheme = "Rampage"
+    ThemeManager.Folder = "RampageLibSettings"
+    -- if not isfolder(ThemeManager.Folder) then makefolder(ThemeManager.Folder) end
 
     ThemeManager.Library = nil
     ThemeManager.AppliedToTab = false
     ThemeManager.BuiltInThemes = {
         ["Rampage"] = {
             1,
-            { 
-                FontColor = "ff0303",     -- #ff0303 - Vermelho brilhante
-                MainColor = "000000",     -- #000000 - Preto puro
-                AccentColor = "d10616",   -- #d10616 - Vermelho escuro vibrante
-                BackgroundColor = "000000", -- #000000 - Preto puro
-                OutlineColor = "400000"   -- #400000 - Vermelho muito escuro
-            },
+            { FontColor = "ff0303", MainColor = "000000", AccentColor = "d10616", BackgroundColor = "000000", OutlineColor = "400000" },
         },
         ["Default"] = {
             2,
@@ -233,7 +228,7 @@ do
     end
 
     function ThemeManager:LoadDefault()
-        local theme = self.DefaultTheme  
+        local theme = "Rampage"
         local content = isfile(self.Folder .. "/themes/default.txt") and readfile(self.Folder .. "/themes/default.txt")
 
         local isDefault = true
@@ -244,9 +239,6 @@ do
                 theme = content
                 isDefault = false
             end
-        else
-            theme = self.DefaultTheme
-            self:SaveDefault(theme)  
         end
 
         if isDefault then
@@ -276,7 +268,7 @@ do
                 LibraryScheme[field] = Color3.fromHex(theme[field])
 
             else
-                FinalTheme[field] = ThemeManager.BuiltInThemes["Rampage"][2][field] 
+                FinalTheme[field] = ThemeManager.BuiltInThemes["Rampage"][2][field]
                 LibraryScheme[field] = Color3.fromHex(ThemeManager.BuiltInThemes["Rampage"][2][field])
             end
         end
@@ -299,7 +291,7 @@ do
         end
 
         self.Library.Scheme = LibraryScheme
-        self.BuiltInThemes["Rampage"] = { 1, FinalTheme } 
+        self.BuiltInThemes["Rampage"] = { 1, FinalTheme }
 
         self.Library:UpdateColorsUsingRegistry()
     end
@@ -368,13 +360,13 @@ do
     function ThemeManager:CreateThemeManager(groupbox)
         groupbox
             :AddLabel("Background color")
-            :AddColorPicker("BackgroundColor", { Default = Color3.fromHex("000000") }) --
-        groupbox:AddLabel("Main color"):AddColorPicker("MainColor", { Default = Color3.fromHex("000000") }) -
-        groupbox:AddLabel("Accent color"):AddColorPicker("AccentColor", { Default = Color3.fromHex("d10616") })-
+            :AddColorPicker("BackgroundColor", { Default = self.Library.Scheme.BackgroundColor })
+        groupbox:AddLabel("Main color"):AddColorPicker("MainColor", { Default = self.Library.Scheme.MainColor })
+        groupbox:AddLabel("Accent color"):AddColorPicker("AccentColor", { Default = self.Library.Scheme.AccentColor })
         groupbox
             :AddLabel("Outline color")
-            :AddColorPicker("OutlineColor", { Default = Color3.fromHex("400000") })
-        groupbox:AddLabel("Font color"):AddColorPicker("FontColor", { Default = Color3.fromHex("ff0303") }) 
+            :AddColorPicker("OutlineColor", { Default = self.Library.Scheme.OutlineColor })
+        groupbox:AddLabel("Font color"):AddColorPicker("FontColor", { Default = self.Library.Scheme.FontColor })
         groupbox:AddDropdown("FontFace", {
             Text = "Font Face",
             Default = "Code",
@@ -392,11 +384,7 @@ do
 
         groupbox:AddDivider()
 
-        groupbox:AddDropdown("ThemeManager_ThemeList", { 
-            Text = "Theme list", 
-            Values = ThemesArray, 
-            Default = "Rampage" 
-        })
+        groupbox:AddDropdown("ThemeManager_ThemeList", { Text = "Theme list", Values = ThemesArray, Default = 1 })
         groupbox:AddButton("Set as default", function()
             self:SaveDefault(self.Library.Options.ThemeManager_ThemeList.Value)
             self.Library:Notify(
@@ -521,5 +509,5 @@ do
     ThemeManager:BuildFolderTree()
 end
 
-getgenv().ObsidianThemeManager = ThemeManager
+getgenv().RampageThemeManager = ThemeManager
 return ThemeManager
