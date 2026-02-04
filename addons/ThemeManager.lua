@@ -49,7 +49,7 @@ do
     ThemeManager.BuiltInThemes = {
         ["Rampage"] = {
             1,
-            { FontColor = "#ffffff", MainColor = "#670404", AccentColor = "#7d55ff", BackgroundColor = "#000000", OutlineColor = "#302f2f" },
+            { FontColor = "#ffffff", MainColor = "#040303", AccentColor = "#e61500", BackgroundColor = "#000000", OutlineColor = "#302f2f" },
         },
         ["Default"] = {
             2,
